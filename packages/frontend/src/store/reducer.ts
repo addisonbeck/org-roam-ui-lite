@@ -1,6 +1,11 @@
 import type { ReactNode } from "react";
 import type { components } from "../api/api.d.ts";
-import type { Layout, Renderer, Theme } from "../graph/graph-types.ts";
+import type {
+	Layout,
+	PhysicsParams,
+	Renderer,
+	Theme,
+} from "../graph/graph-types.ts";
 
 /** UI state interface */
 export interface UiState {
@@ -13,6 +18,7 @@ export interface UiState {
 	settingsOpen: boolean;
 	detailsOpen: boolean;
 	selected: components["schemas"]["Node"] & { body?: ReactNode };
+	physicsParams: PhysicsParams;
 }
 
 // Define actions for the reducer
@@ -35,6 +41,19 @@ export const initialState: UiState = {
 	settingsOpen: false,
 	detailsOpen: false,
 	selected: {} as components["schemas"]["Node"] & { body?: ReactNode },
+	physicsParams: {
+		chargeStrength: -150,
+		linkDistance: 100,
+		centerForce: 0.05,
+		alphaDecay: 0.0228,
+		velocityDecay: 0.4,
+		warmupTicks: 100,
+		collisionEnabled: false,
+		collisionRadius: 5,
+		fcoseNodeRepulsion: 4500,
+		fcoseIdealEdgeLength: 50,
+		fcoseGravity: 0.25,
+	},
 };
 
 export const persistedKeys: (keyof UiState)[] = [
@@ -44,6 +63,7 @@ export const persistedKeys: (keyof UiState)[] = [
 	"nodeSize",
 	"labelScale",
 	"showLabels",
+	"physicsParams",
 ];
 
 export function uiReducer(state: UiState, action: Action): UiState {

@@ -5,6 +5,7 @@ import type { LinkObject, NodeObject } from "force-graph";
 
 export const Layouts = [
 	"cose",
+	"fcose",
 	"grid",
 	"circle",
 	"concentric",
@@ -47,6 +48,22 @@ export type GraphInstance =
 	| ForceGraph<GraphNode, GraphLink>
 	| ForceGraph3DInstance<NodeObject, LinkObject<NodeObject>>;
 
+export interface PhysicsParams {
+	// force-graph + 3d-force-graph (d3-force API)
+	chargeStrength: number; // default: -150
+	linkDistance: number; // default: 100
+	centerForce: number; // default: 0.05
+	alphaDecay: number; // default: 0.0228
+	velocityDecay: number; // default: 0.4
+	warmupTicks: number; // default: 100
+	collisionEnabled: boolean; // default: false
+	collisionRadius: number; // default: 5
+	// cytoscape fcose only
+	fcoseNodeRepulsion?: number; // default: 4500
+	fcoseIdealEdgeLength?: number; // default: 50
+	fcoseGravity?: number; // default: 0.25
+}
+
 export type RendererFunction = (
 	nodes: GraphNode[],
 	edges: GraphLink[],
@@ -56,4 +73,5 @@ export type RendererFunction = (
 	nodeSize: number,
 	labelScale: number,
 	showLabels: boolean,
+	physicsParams: PhysicsParams,
 ) => GraphInstance;

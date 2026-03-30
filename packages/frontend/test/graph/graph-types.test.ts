@@ -18,7 +18,11 @@ describe("Layouts", () => {
 	});
 
 	test("has correct length", () => {
-		expect(Layouts).toHaveLength(6);
+		expect(Layouts).toHaveLength(7);
+	});
+
+	test("Layouts includes fcose", () => {
+		expect(Layouts).toContain("fcose");
 	});
 });
 

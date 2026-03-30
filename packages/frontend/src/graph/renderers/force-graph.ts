@@ -48,8 +48,7 @@ const renderForceGraph: RendererFunction = (
 		.nodeVal("val")
 		.nodeRelSize(1)
 		.linkColor("color")
-		.linkWidth(2)
-		.graphData({ nodes: fgNodes, links: edges });
+		.linkWidth(2);
 
 	fg.d3Force("charge")?.strength(physicsParams.chargeStrength);
 	fg.d3Force("link")?.distance(physicsParams.linkDistance);
@@ -62,6 +61,8 @@ const renderForceGraph: RendererFunction = (
 	} else {
 		fg.d3Force("collision", null);
 	}
+
+	fg.graphData({ nodes: fgNodes, links: edges });
 
 	if (showLabels) {
 		fg.nodeCanvasObject((node: GraphNode, ctx, scale) => {

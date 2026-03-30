@@ -1,3 +1,4 @@
+import { forceCollide } from "d3-force";
 import type ForceGraph from "force-graph";
 import ForceGraphCtor from "force-graph";
 import { getCssVariable } from "../../utils/style.ts";
@@ -6,6 +7,7 @@ import type {
 	GraphLink,
 	GraphNode,
 	Layout,
+	PhysicsParams,
 	RendererFunction,
 } from "../graph-types.ts";
 
@@ -20,6 +22,7 @@ import type {
  * @param nodeSize - Display size for nodes
  * @param labelScale - Relative scale for labels
  * @param showLabels - Whether to display labels
+ * @param physicsParams - Physics simulation parameters
  * @returns The force-graph instance used for rendering
  */
 const renderForceGraph: RendererFunction = (
@@ -31,6 +34,7 @@ const renderForceGraph: RendererFunction = (
 	nodeSize: number,
 	labelScale: number,
 	showLabels: boolean,
+	physicsParams: PhysicsParams,
 ): GraphInstance => {
 	const radius = nodeSize / 2;
 	const area = Math.PI * radius * radius;
@@ -46,6 +50,18 @@ const renderForceGraph: RendererFunction = (
 		.linkColor("color")
 		.linkWidth(2)
 		.graphData({ nodes: fgNodes, links: edges });
+
+	fg.d3Force("charge")?.strength(physicsParams.chargeStrength);
+	fg.d3Force("link")?.distance(physicsParams.linkDistance);
+	fg.d3Force("center")?.strength(physicsParams.centerForce);
+	fg.d3AlphaDecay(physicsParams.alphaDecay);
+	fg.d3VelocityDecay(physicsParams.velocityDecay);
+	fg.warmupTicks(physicsParams.warmupTicks);
+	if (physicsParams.collisionEnabled) {
+		fg.d3Force("collision", forceCollide(physicsParams.collisionRadius));
+	} else {
+		fg.d3Force("collision", null);
+	}
 
 	if (showLabels) {
 		fg.nodeCanvasObject((node: GraphNode, ctx, scale) => {

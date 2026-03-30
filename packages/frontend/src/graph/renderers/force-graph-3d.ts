@@ -1,5 +1,6 @@
 import type { ForceGraph3DInstance } from "3d-force-graph";
 import ForceGraph3D from "3d-force-graph";
+import { forceCollide } from "d3-force";
 import type { LinkObject, NodeObject } from "force-graph";
 import { getCssVariable } from "../../utils/style.ts";
 import type {
@@ -7,6 +8,7 @@ import type {
 	GraphLink,
 	GraphNode,
 	Layout,
+	PhysicsParams,
 	RendererFunction,
 } from "../graph-types.ts";
 
@@ -51,6 +53,7 @@ function createForceGraph3DInstance(
  * @param container - Target element for rendering
  * @param existing - Existing 3d-force-graph instance to update
  * @param nodeSize - Display size for nodes
+ * @param physicsParams - Physics simulation parameters
  * @returns The 3d-force-graph instance used for rendering
  */
 const renderForceGraph3D: RendererFunction = (
@@ -62,6 +65,7 @@ const renderForceGraph3D: RendererFunction = (
 	nodeSize: number,
 	labelScale: number,
 	showLabels: boolean,
+	physicsParams: PhysicsParams,
 ): GraphInstance => {
 	void labelScale;
 	void showLabels;
@@ -87,6 +91,18 @@ const renderForceGraph3D: RendererFunction = (
 		.linkColor("color")
 		.linkWidth(2)
 		.graphData({ nodes: fgNodes, links: edges });
+
+	fg.d3Force("charge")?.strength(physicsParams.chargeStrength);
+	fg.d3Force("link")?.distance(physicsParams.linkDistance);
+	fg.d3Force("center")?.strength(physicsParams.centerForce);
+	fg.d3AlphaDecay(physicsParams.alphaDecay);
+	fg.d3VelocityDecay(physicsParams.velocityDecay);
+	fg.warmupTicks(physicsParams.warmupTicks);
+	if (physicsParams.collisionEnabled) {
+		fg.d3Force("collision", forceCollide(physicsParams.collisionRadius));
+	} else {
+		fg.d3Force("collision", null);
+	}
 
 	return fg;
 };

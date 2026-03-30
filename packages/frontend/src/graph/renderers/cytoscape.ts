@@ -1,13 +1,17 @@
 import type { Core, LayoutOptions } from "cytoscape";
 import cytoscape from "cytoscape";
+import fcose from "cytoscape-fcose";
 import { getCssVariable } from "../../utils/style.ts";
 import type {
 	GraphInstance,
 	GraphLink,
 	GraphNode,
 	Layout,
+	PhysicsParams,
 	RendererFunction,
 } from "../graph-types.ts";
+
+cytoscape.use(fcose);
 
 /**
  * Render or update a graph using Cytoscape.
@@ -20,6 +24,7 @@ import type {
  * @param nodeSize - Display size for nodes
  * @param labelScale - Relative scale for labels
  * @param showLabels - Whether to display labels
+ * @param physicsParams - Physics simulation parameters (fcose fields used when layout === 'fcose')
  * @returns The Cytoscape instance used for rendering
  */
 const renderCytoscape: RendererFunction = (
@@ -31,6 +36,7 @@ const renderCytoscape: RendererFunction = (
 	nodeSize: number,
 	labelScale: number,
 	showLabels: boolean,
+	physicsParams: PhysicsParams,
 ): GraphInstance => {
 	const elements = [
 		...nodes.map((n) => ({ data: n })),
@@ -53,12 +59,16 @@ const renderCytoscape: RendererFunction = (
 		},
 	];
 
-	layout = (layout as string) === "fcose" ? "cose" : layout;
-
 	const cyLayout = {
 		name: layout,
 		tile: false,
 		animate: "end",
+		...(layout === "fcose" && {
+			nodeRepulsion: physicsParams.fcoseNodeRepulsion ?? 4500,
+			idealEdgeLength: physicsParams.fcoseIdealEdgeLength ?? 50,
+			gravity: physicsParams.fcoseGravity ?? 0.25,
+			quality: "draft",
+		}),
 	} as LayoutOptions;
 
 	const cyExisting = existing as Core | undefined;

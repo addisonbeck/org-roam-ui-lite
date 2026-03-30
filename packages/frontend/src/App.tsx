@@ -3,7 +3,12 @@ import { GraphContainer } from "./components/GraphContainer.tsx";
 import { GraphControls } from "./components/GraphControls.tsx";
 import { SettingsPanel } from "./components/SettingsPanel.tsx";
 import { GlobalStyles } from "./components/ui/GlobalStyles.tsx";
-import type { Layout, Renderer, Theme } from "./graph/graph-types.ts";
+import type {
+	Layout,
+	PhysicsParams,
+	Renderer,
+	Theme,
+} from "./graph/graph-types.ts";
 import { Layouts, Renderers, Themes } from "./graph/graph-types.ts";
 import { useDetailsPanel } from "./hooks/useDetailsPanel.ts";
 import { useGraphManager } from "./hooks/useGraphManager.ts";
@@ -22,6 +27,7 @@ function App() {
 		settingsOpen,
 		detailsOpen,
 		selected,
+		physicsParams,
 	} = state;
 
 	const {
@@ -35,6 +41,7 @@ function App() {
 		setNodeSize,
 		setLabelScale,
 		setShowLabels,
+		setPhysicsParams,
 	} = useGraphManager({
 		theme,
 		renderer,
@@ -42,6 +49,7 @@ function App() {
 		nodeSize,
 		labelScale,
 		showLabels,
+		physicsParams,
 	});
 
 	const { closeDetails, toggleDetails } = useDetailsPanel({
@@ -81,6 +89,12 @@ function App() {
 		dispatch({ type: "SET_STATE", payload: { showLabels: s } });
 	};
 
+	const handlePhysicsParamsChange = (params: Partial<PhysicsParams>) => {
+		const updated = { ...physicsParams, ...params };
+		setPhysicsParams(updated);
+		dispatch({ type: "SET_STATE", payload: { physicsParams: updated } });
+	};
+
 	return (
 		<div className="vh-100 vw-100">
 			<GlobalStyles />
@@ -97,12 +111,14 @@ function App() {
 				nodeSize={nodeSize}
 				labelScale={labelScale}
 				showLabels={showLabels}
+				physicsParams={physicsParams}
 				onThemeChange={handleThemeChange}
 				onRendererChange={handleRendererChange}
 				onLayoutChange={handleLayoutChange}
 				onNodeSizeChange={handleNodeSizeChange}
 				onLabelScaleChange={handleLabelScaleChange}
 				onShowLabelsChange={handleShowLabelsChange}
+				onPhysicsParamsChange={handlePhysicsParamsChange}
 				onClose={() => dispatch({ type: "TOGGLE_SETTINGS" })}
 			/>
 

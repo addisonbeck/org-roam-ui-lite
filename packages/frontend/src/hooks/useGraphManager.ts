@@ -9,6 +9,7 @@ import {
 import type {
 	GraphInstance,
 	Layout,
+	PhysicsParams,
 	Renderer,
 	Theme,
 } from "../graph/graph-types.ts";
@@ -21,6 +22,7 @@ interface GraphConfig {
 	nodeSize: number;
 	labelScale: number;
 	showLabels: boolean;
+	physicsParams: PhysicsParams;
 }
 
 interface UseGraphManagerProps extends GraphConfig {
@@ -37,6 +39,7 @@ export function useGraphManager(initialConfig: UseGraphManagerProps) {
 		nodeSize: initialConfig.nodeSize,
 		labelScale: initialConfig.labelScale,
 		showLabels: initialConfig.showLabels,
+		physicsParams: initialConfig.physicsParams,
 	});
 	const themeRef = useRef<Theme>(initialConfig.theme);
 
@@ -94,6 +97,7 @@ export function useGraphManager(initialConfig: UseGraphManagerProps) {
 			configRef.current.nodeSize,
 			configRef.current.labelScale,
 			configRef.current.showLabels,
+			configRef.current.physicsParams,
 		);
 		bindGraphEvents();
 	}, [bindGraphEvents]);
@@ -175,6 +179,14 @@ export function useGraphManager(initialConfig: UseGraphManagerProps) {
 		[refreshGraph],
 	);
 
+	const setPhysicsParams = useCallback(
+		async (physicsParams: PhysicsParams) => {
+			configRef.current = { ...configRef.current, physicsParams };
+			await refreshGraph();
+		},
+		[refreshGraph],
+	);
+
 	return {
 		graphRef,
 		openNodeAction,
@@ -186,6 +198,7 @@ export function useGraphManager(initialConfig: UseGraphManagerProps) {
 		setNodeSize,
 		setLabelScale,
 		setShowLabels,
+		setPhysicsParams,
 		refreshGraph,
 	};
 }

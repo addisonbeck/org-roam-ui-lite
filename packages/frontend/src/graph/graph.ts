@@ -6,6 +6,7 @@ import type {
 	GraphLink,
 	GraphNode,
 	Layout,
+	PhysicsParams,
 	Renderer,
 	RendererFunction,
 	Theme,
@@ -15,7 +16,15 @@ import { Layouts, Renderers, Themes } from "./graph-types.ts";
 const api = createClient<paths>({ baseUrl: "./" });
 
 export { Layouts, Renderers, Themes };
-export type { GraphInstance, GraphLink, GraphNode, Layout, Renderer, Theme };
+export type {
+	GraphInstance,
+	GraphLink,
+	GraphNode,
+	Layout,
+	PhysicsParams,
+	Renderer,
+	Theme,
+};
 
 interface GraphData {
 	nodes: GraphNode[];
@@ -64,6 +73,7 @@ export async function drawGraph(
 	nodeSize: number,
 	labelScale: number,
 	showLabels: boolean,
+	physicsParams: PhysicsParams,
 ): Promise<GraphInstance> {
 	const { nodes, edges } = await fetchGraphData();
 	const rendererMod = await rendererMap[renderer]();
@@ -77,6 +87,7 @@ export async function drawGraph(
 		nodeSize,
 		labelScale,
 		showLabels,
+		physicsParams,
 	);
 }
 

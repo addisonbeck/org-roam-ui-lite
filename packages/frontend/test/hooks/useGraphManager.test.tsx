@@ -35,6 +35,20 @@ describe("useGraphManager Hook", () => {
 	let mockOpenNode: ReturnType<typeof vi.fn>;
 	let mockGraphInstance: { type: string };
 
+	const defaultPhysicsParams = {
+		chargeStrength: -150,
+		linkDistance: 100,
+		centerForce: 0.05,
+		alphaDecay: 0.0228,
+		velocityDecay: 0.4,
+		warmupTicks: 100,
+		collisionEnabled: false,
+		collisionRadius: 5,
+		fcoseNodeRepulsion: 4500,
+		fcoseIdealEdgeLength: 50,
+		fcoseGravity: 0.25,
+	};
+
 	const defaultProps = {
 		theme: "light" as Theme,
 		renderer: "cytoscape" as const,
@@ -42,6 +56,7 @@ describe("useGraphManager Hook", () => {
 		nodeSize: 10,
 		labelScale: 1,
 		showLabels: true,
+		physicsParams: defaultPhysicsParams,
 	};
 
 	beforeEach(async () => {

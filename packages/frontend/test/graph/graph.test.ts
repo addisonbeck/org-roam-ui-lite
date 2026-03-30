@@ -42,6 +42,20 @@ vi.mock("../../src/graph/renderers/force-graph-3d.ts", () => ({
 	default: mock3DForceGraphRenderer,
 }));
 
+const defaultPhysicsParams = {
+	chargeStrength: -150,
+	linkDistance: 100,
+	centerForce: 0.05,
+	alphaDecay: 0.0228,
+	velocityDecay: 0.4,
+	warmupTicks: 100,
+	collisionEnabled: false,
+	collisionRadius: 5,
+	fcoseNodeRepulsion: 4500,
+	fcoseIdealEdgeLength: 50,
+	fcoseGravity: 0.25,
+};
+
 describe("Graph Module", () => {
 	let graphModule: typeof import("../../src/graph/graph.ts");
 
@@ -76,6 +90,7 @@ describe("Graph Module", () => {
 				10,
 				1,
 				true,
+				defaultPhysicsParams,
 			);
 
 			expect(mockGET).toHaveBeenCalledWith("api/graph.json");
@@ -100,6 +115,7 @@ describe("Graph Module", () => {
 				10,
 				1,
 				true,
+				defaultPhysicsParams,
 			);
 		});
 
@@ -114,7 +130,16 @@ describe("Graph Module", () => {
 			const mockContainer = document.createElement("div");
 
 			await expect(
-				drawGraph("cytoscape", "cose", mockContainer, undefined, 10, 1, true),
+				drawGraph(
+					"cytoscape",
+					"cose",
+					mockContainer,
+					undefined,
+					10,
+					1,
+					true,
+					defaultPhysicsParams,
+				),
 			).rejects.toThrow("API error: Network error");
 		});
 	});
@@ -144,6 +169,7 @@ describe("Graph Module", () => {
 				15,
 				1.2,
 				false,
+				defaultPhysicsParams,
 			);
 
 			expect(mockCytoscapeRenderer).toHaveBeenCalled();
@@ -162,6 +188,7 @@ describe("Graph Module", () => {
 				20,
 				0.8,
 				true,
+				defaultPhysicsParams,
 			);
 
 			expect(mockForceGraphRenderer).toHaveBeenCalled();
@@ -180,6 +207,7 @@ describe("Graph Module", () => {
 				25,
 				1.5,
 				true,
+				defaultPhysicsParams,
 			);
 
 			expect(mock3DForceGraphRenderer).toHaveBeenCalled();
@@ -201,6 +229,7 @@ describe("Graph Module", () => {
 				10,
 				1,
 				true,
+				defaultPhysicsParams,
 			);
 
 			expect(mockCytoscapeRenderer).toHaveBeenCalledWith(
@@ -212,6 +241,7 @@ describe("Graph Module", () => {
 				10,
 				1,
 				true,
+				defaultPhysicsParams,
 			);
 		});
 	});

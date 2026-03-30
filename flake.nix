@@ -14,20 +14,17 @@
         emacsPackages = pkgs.emacsPackagesFor pkgs.emacs;
         packageJson = builtins.fromJSON (builtins.readFile ./package.json);
         nodejs = pkgs.nodejs_24;
-        bundle = pkgs.stdenv.mkDerivation rec {
+        bundle = pkgs.buildNpmPackage {
           pname = "org-roam-ui-lite-bundle";
-          version = "0.2.9";
-          src = pkgs.fetchurl {
-            url = "https://github.com/tani/org-roam-ui-lite/releases/download/v${version}/org-roam-ui-lite.zip";
-            sha256 = "sha256-uxFYybFGBZhbOKNaDZhRPfi/OkTGWDT6rbGOn8fvev0=";
-          };
-          nativeBuildInputs = [ pkgs.unzip ];
-          unpackPhase = ''
-            unzip $src
-          '';
+          version = packageJson.version;
+          src = ./.;
+          npmDepsHash = "sha256-QY6B62zWaKX0mgr7F8IWoK2q8PB7NMi86wtFy0hkLTY=";
+          npmBuildScript = "build";
           installPhase = ''
+            runHook preInstall
             mkdir -p $out
-            cp -r org-roam-ui-lite/* $out/
+            cp -r dist/. $out/
+            runHook postInstall
           '';
         };
         build = pkgs.writeShellScriptBin "org-roam-ui-lite-build" ''

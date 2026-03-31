@@ -118,6 +118,9 @@ const renderForceGraph3D: RendererFunction = (
 	}
 
 	fg.graphData({ nodes: fgNodes, links: edges });
+	if (existing) {
+		fg.d3ReheatSimulation();
+	}
 
 	return fg;
 };

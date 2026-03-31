@@ -103,6 +103,20 @@ const renderForceGraph3D: RendererFunction = (
 		fg.d3Force("collision", null);
 	}
 
+	if (existing) {
+		const prev = fg.graphData();
+		const posMap = new Map(prev.nodes.map((n) => [String(n.id), n]));
+		fgNodes.forEach((n) => {
+			const p = posMap.get(n.id);
+			if (p?.x !== undefined) {
+				n.x = p.x;
+				if (p.y !== undefined) n.y = p.y;
+				if (p.vx !== undefined) n.vx = p.vx;
+				if (p.vy !== undefined) n.vy = p.vy;
+			}
+		});
+	}
+
 	fg.graphData({ nodes: fgNodes, links: edges });
 
 	return fg;

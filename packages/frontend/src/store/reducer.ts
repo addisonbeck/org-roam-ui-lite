@@ -47,7 +47,7 @@ export const initialState: UiState = {
 		centerForce: 0.05,
 		alphaDecay: 0.0228,
 		velocityDecay: 0.4,
-		warmupTicks: 100,
+		warmupTicks: 0,
 		collisionEnabled: false,
 		collisionRadius: 5,
 		fcoseNodeRepulsion: 4500,

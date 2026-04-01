@@ -199,17 +199,11 @@ export function useGraphManager(initialConfig: UseGraphManagerProps) {
 						| null
 						| undefined;
 					d3Force(name: string, force: unknown): unknown;
-					d3AlphaDecay(v: number): unknown;
-					d3VelocityDecay(v: number): unknown;
-					warmupTicks(v: number): unknown;
 					d3ReheatSimulation(): unknown;
 				};
 				fg.d3Force("charge")?.strength(physicsParams.chargeStrength);
 				fg.d3Force("link")?.distance(physicsParams.linkDistance);
 				fg.d3Force("center")?.strength(physicsParams.centerForce);
-				fg.d3AlphaDecay(physicsParams.alphaDecay);
-				fg.d3VelocityDecay(physicsParams.velocityDecay);
-				fg.warmupTicks(physicsParams.warmupTicks);
 				if (physicsParams.collisionEnabled) {
 					fg.d3Force("collision", forceCollide(physicsParams.collisionRadius));
 				} else {

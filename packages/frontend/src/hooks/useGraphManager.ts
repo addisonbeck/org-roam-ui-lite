@@ -1,4 +1,5 @@
 import type { Core } from "cytoscape";
+import { forceCollide } from "d3-force";
 import { useCallback, useRef } from "react";
 import { destroyGraph, drawGraph } from "../graph/graph.ts";
 import {
@@ -182,7 +183,42 @@ export function useGraphManager(initialConfig: UseGraphManagerProps) {
 	const setPhysicsParams = useCallback(
 		async (physicsParams: PhysicsParams) => {
 			configRef.current = { ...configRef.current, physicsParams };
-			await refreshGraph();
+			const renderer = configRef.current.renderer;
+			const instance = graphInstanceRef.current;
+			if (
+				instance &&
+				(renderer === "force-graph" || renderer === "3d-force-graph")
+			) {
+				// Update d3-force simulation directly to avoid triggering graphData()'s
+				// internal update cycle, which conflicts with simulation reheat timing.
+				const fg = instance as {
+					d3Force(
+						name: string,
+					):
+						| { strength(v: number): unknown; distance(v: number): unknown }
+						| null
+						| undefined;
+					d3Force(name: string, force: unknown): unknown;
+					d3AlphaDecay(v: number): unknown;
+					d3VelocityDecay(v: number): unknown;
+					warmupTicks(v: number): unknown;
+					d3ReheatSimulation(): unknown;
+				};
+				fg.d3Force("charge")?.strength(physicsParams.chargeStrength);
+				fg.d3Force("link")?.distance(physicsParams.linkDistance);
+				fg.d3Force("center")?.strength(physicsParams.centerForce);
+				fg.d3AlphaDecay(physicsParams.alphaDecay);
+				fg.d3VelocityDecay(physicsParams.velocityDecay);
+				fg.warmupTicks(physicsParams.warmupTicks);
+				if (physicsParams.collisionEnabled) {
+					fg.d3Force("collision", forceCollide(physicsParams.collisionRadius));
+				} else {
+					fg.d3Force("collision", null);
+				}
+				fg.d3ReheatSimulation();
+			} else {
+				await refreshGraph();
+			}
 		},
 		[refreshGraph],
 	);
